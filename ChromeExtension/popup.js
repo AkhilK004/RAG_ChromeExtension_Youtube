@@ -1,4 +1,4 @@
-const API_URL = "https://rag-chromeextension-youtube.onrender.com/ask";
+const API_URL = "https://chromeextensionrag-youtube.onrender.com/ask_with_transcript";
 
 let lastAnswer = "";
 let currentVideoId = "";
@@ -27,6 +27,18 @@ async function getVideoId(tab) {
         return;
       }
       resolve(resp?.videoId || parseVideoIdFromUrl(tab.url));
+    });
+  });
+}
+
+async function getTranscript(tabId) {
+  return new Promise((resolve) => {
+    chrome.tabs.sendMessage(tabId, { type: "GET_TRANSCRIPT" }, (resp) => {
+      if (chrome.runtime.lastError) {
+        resolve(null);
+        return;
+      }
+      resolve(resp?.transcript || null);
     });
   });
 }
@@ -66,8 +78,8 @@ function formatTime(seconds) {
   const s = seconds % 60;
   const h = Math.floor(m / 60);
   const mm = m % 60;
-  if (h > 0) return `${String(h).padStart(2,"0")}:${String(mm).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
-  return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  if (h > 0) return `${String(h).padStart(2, "0")}:${String(mm).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
 // ---------- sources UI ----------
@@ -155,7 +167,6 @@ async function init() {
 
   currentVideoId = vid || "";
   document.getElementById("videoPill").textContent = `Video: ${vid || "not detected"}`;
-
   document.getElementById("chat").innerHTML = "";
 
   if (!vid) {
@@ -202,7 +213,7 @@ async function send() {
   // show user message
   appendMessage("user", question);
   textarea.value = "";
-  setStatus(`Thinking (top-k=${k})…`);
+  setStatus(`Preparing transcript…`);
   setLoading(true);
 
   // persist user message
@@ -211,10 +222,28 @@ async function send() {
   await saveChat(existing);
 
   try {
+    // 1) get transcript from page (user IP, not Render IP)
+    const transcript = await getTranscript(tab.id);
+
+    if (!transcript) {
+      setLoading(false);
+      setStatus("Transcript not found. Try YouTube → ⋯ → Show transcript, then retry.", "err");
+      appendMessage("ai", "I couldn’t read the transcript on this page. Open the transcript panel and try again.");
+      return;
+    }
+
+    setStatus(`Thinking (top-k=${k})…`);
+
+    // 2) send transcript + question to backend
     const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ video_id: videoId, question, k })
+      body: JSON.stringify({
+        video_id: videoId,
+        transcript: transcript,
+        question: question,
+        k: k
+      })
     });
 
     const data = await res.json().catch(() => ({}));
@@ -239,7 +268,7 @@ async function send() {
   } catch (e) {
     const msg =
       `Backend error:\n${e.message}\n\n` +
-      `Check:\n- Server running at http://127.0.0.1:8000\n- Try /docs`;
+      `Check:\n- Backend: https://chromeextensionrag-youtube.onrender.com/docs`;
 
     appendMessage("ai", msg);
 

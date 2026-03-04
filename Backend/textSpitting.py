@@ -10,6 +10,7 @@ def chunk_segments(segments, chunk_size=1000, chunk_overlap=200):
     current_start = None
 
     def flush():
+        
         nonlocal current_text, current_start
         text = current_text.strip()
         if text:

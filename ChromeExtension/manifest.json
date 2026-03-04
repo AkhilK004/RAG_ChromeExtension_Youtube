@@ -5,7 +5,7 @@
   "description": "Ask questions about the current YouTube video using your local RAG backend.",
   "permissions": ["activeTab", "storage"],
   "host_permissions": [
-    "https://rag-chromeextension-youtube.onrender.com/*",
+    "https://chromeextensionrag-youtube.onrender.com/*",
     "*://*.youtube.com/*",
     "http://127.0.0.1:8000/*"
   ],
