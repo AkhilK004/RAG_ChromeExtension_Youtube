@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+numpy
+faiss-cpu
+sentence-transformers
+youtube-transcript-api
+langchain-core
+langchain-huggingface
+pydantic
