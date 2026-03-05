@@ -1,37 +1,62 @@
-# YouTube RAG Assistant
+# 🎥 YouTube RAG Assistant
 
-A **Chrome Extension + FastAPI backend** that allows users to **ask questions about any YouTube video**.
+A **Chrome Extension + FastAPI backend** that allows users to **ask questions about any YouTube video** using **Retrieval Augmented Generation (RAG)**.
 
-The system automatically:
+The system automatically extracts the transcript of a YouTube video, converts it into semantic embeddings, retrieves the most relevant segments, and generates answers using an LLM.
 
-1. Fetches the transcript of the video
-2. Chunks the transcript
-3. Converts chunks into embeddings
-4. Stores them in a vector database
-5. Converts the user query into an embedding
-6. Retrieves the most relevant transcript chunks
-7. Uses an LLM to generate an answer grounded in the video
-
-Users only need to **ask a question** — the system handles the rest.
+✅ Users only need to ask a question — the system handles everything else.
 
 ---
 
-# 🚀 Features
+## 🏷️ Badges
 
-* Ask questions about any YouTube video
-* Automatic transcript retrieval
-* Retrieval-Augmented Generation (RAG)
-* Semantic search with vector embeddings
-* Vector database using FAISS
-* LLM-powered answers
-* Chrome extension interface
-* Deployable backend (Render / Docker)
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-API-green)
+![RAG](https://img.shields.io/badge/RAG-LLM-orange)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
 
-# 🧠 System Architecture
+## 🚀 Demo
 
-```
+### Chrome Extension Interface
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/36f2d17a-0db8-46a9-b23b-caccdfae7d3a" width="800" alt="Chrome Extension Interface"/>
+</p>
+
+### Example Question & Answer
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/ed67906a-8fa8-4ff4-aaaf-120f8cea9891" width="800" alt="Example Q&A"/>
+</p>
+
+### Transcript Retrieval & Context
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/1d1ab2de-3f8b-4639-9568-a9270b3b4a28" width="800" alt="Transcript Retrieval & Context"/>
+</p>
+
+### Backend Processing
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b7b94e4b-c4e7-4770-950c-a6af84dbdca4" width="800" alt="Backend Processing"/>
+</p>
+
+---
+
+## ✨ Features
+
+- 🎬 Ask questions about any YouTube video
+- 📜 Automatic transcript retrieval
+- 🧠 Retrieval Augmented Generation (RAG)
+- 🔎 Semantic search using vector embeddings
+- 🗄️ Vector database powered by **FAISS**
+- 🤖 LLM-based answers via **HuggingFace Inference API**
+- 🧩 Chrome Extension UI
+- ☁️ Deployable backend using **Docker / Render**
+
+---
+
+## 🧠 System Architecture
+
+```text
 User Question
       │
       ▼
@@ -47,12 +72,10 @@ Fetch YouTube Transcript
 Chunk Transcript
       │
       ▼
-Generate Embeddings
-(Sentence Transformers)
+Generate Embeddings (Sentence Transformers)
       │
       ▼
-Store in Vector Database
-(FAISS)
+Store in Vector DB (FAISS)
       │
       ▼
 Embed User Query
@@ -64,14 +87,13 @@ Similarity Search (Top-K)
 Send Context + Question to LLM
       │
       ▼
-Return Answer
-```
+Generate Answer
+      │
+      ▼
+Return Response to Extension
 
----
 
-# 📂 Project Structure
 
-```
 YouTubeRAG
 │
 ├── Backend
@@ -91,187 +113,42 @@ YouTubeRAG
     ├── content.js
     ├── popup.js
     └── popup.html
-```
 
----
 
-# ⚙️ Backend Components
 
-### api_server.py
-
-FastAPI server exposing API endpoints used by the Chrome extension.
-
-### transcriptionVideo.py
-
-Fetches the transcript of a YouTube video using `youtube-transcript-api`.
-
-### textSpitting.py
-
-Chunks the transcript into manageable segments with timestamps.
-
-### vectorConversion.py
-
-Generates embeddings using:
-
-```
-sentence-transformers/all-MiniLM-L6-v2
-```
-
-### vectorDB.py
-
-Stores vectors using **FAISS** for fast similarity search.
-
-### retriever.py
-
-Handles:
-
-* transcript chunking
-* embedding generation
-* vector search
-
-### rag_pipeline.py
-
-Combines retrieved transcript chunks with the user question and sends them to the LLM.
-
-### chatmodel.py
-
-Loads the LLM via HuggingFace Inference API.
-
----
-
-# 🔧 Local Setup
-
-## 1. Clone repository
-
-```
+Local Setup
+1️⃣ Clone the repository
 git clone https://github.com/your-username/youtube-rag-assistant.git
 cd youtube-rag-assistant
-```
-
----
-
-## 2. Setup backend
-
-```
+2️⃣ Setup backend
 cd Backend
 python -m venv venv
-```
 
-Activate environment
+Activate environment:
 
-### Windows
+Windows
 
-```
 venv\Scripts\activate
-```
 
-### Linux / Mac
+Linux / Mac
 
-```
 source venv/bin/activate
-```
 
-Install dependencies
+Install dependencies:
 
-```
 pip install -r requirements.txt
-```
+3️⃣ Add HuggingFace API Token
 
----
+Create a .env file inside the Backend folder:
 
-## 3. Add HuggingFace token
-
-Create `.env` file inside `Backend` folder
-
-```
 HF_TOKEN=your_huggingface_token
-```
-
----
-
-## 4. Run backend
-
-```
+4️⃣ Run the backend
 uvicorn api_server:app --reload
-```
 
-Server will start at
+Server:
 
-```
 http://127.0.0.1:8000
-```
 
-Swagger API docs:
+Swagger docs:
 
-```
 http://127.0.0.1:8000/docs
-```
-
----
-
-# 🧩 Load Chrome Extension
-
-1. Open Chrome
-2. Go to
-
-```
-chrome://extensions
-```
-
-3. Enable **Developer Mode**
-4. Click **Load Unpacked**
-5. Select the `ChromeExtension` folder
-
----
-
-# 🚀 Deploy Backend to Render
-
-1. Push repository to GitHub
-2. Create a **Render Web Service**
-3. Set:
-
-```
-Environment: Docker
-Docker Build Context Directory: Backend
-```
-
-4. Add environment variable:
-
-```
-HF_TOKEN=your_huggingface_token
-```
-
-5. Deploy
-
-Backend will be available at:
-
-```
-https://your-service.onrender.com
-```
-
----
-
-# 🛠 Technologies Used
-
-* FastAPI
-* HuggingFace API
-* Sentence Transformers
-* FAISS
-* Chrome Extension API
-* Docker
-* Render
-
----
-
-# 💡 Future Improvements
-
-* persistent vector database
-* embedding caching per video
-* streaming responses
-* multi-video knowledge base
-* improved transcript retrieval
-
----
-
-<img width="1211" height="924" alt="image" src="https://github.com/user-attachments/assets/36f2d17a-0db8-46a9-b23b-caccdfae7d3a" />
-
