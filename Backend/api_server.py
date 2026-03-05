@@ -1,16 +1,17 @@
+# api_server.py
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from chatmodel import get_chat_model
-from rag_pipeline import answer_query_from_transcript_text
+from rag_pipeline import answer_query_by_video_id
 
-app = FastAPI(title="YouTube RAG API", version="1.0")
+app = FastAPI(title="YouTube RAG API", version="2.0")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=False,  # ✅ fix
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -22,22 +23,23 @@ def get_model():
         _chat_model = get_chat_model()
     return _chat_model
 
-class AskWithTranscriptRequest(BaseModel):
+
+class AskRequest(BaseModel):
     video_id: str
-    transcript: str
     question: str
     k: int = 3
+
 
 @app.get("/")
 def root():
     return {"message": "YouTube RAG API running"}
 
-@app.post("/ask_with_transcript")
-def ask_with_transcript(req: AskWithTranscriptRequest):
+
+@app.post("/ask")
+def ask(req: AskRequest):
     try:
-        answer, sources = answer_query_from_transcript_text(
+        answer, sources = answer_query_by_video_id(
             video_id=req.video_id,
-            transcript=req.transcript,
             question=req.question,
             chat_model=get_model(),
             k=req.k,
