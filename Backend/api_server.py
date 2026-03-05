@@ -10,12 +10,11 @@ app = FastAPI(title="YouTube RAG API", version="1.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,  # ✅ fix
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# lazy load (faster boot)
 _chat_model = None
 def get_model():
     global _chat_model
@@ -23,18 +22,15 @@ def get_model():
         _chat_model = get_chat_model()
     return _chat_model
 
-
 class AskWithTranscriptRequest(BaseModel):
     video_id: str
-    transcript: str   # FULL transcript text from extension
+    transcript: str
     question: str
     k: int = 3
-
 
 @app.get("/")
 def root():
     return {"message": "YouTube RAG API running"}
-
 
 @app.post("/ask_with_transcript")
 def ask_with_transcript(req: AskWithTranscriptRequest):

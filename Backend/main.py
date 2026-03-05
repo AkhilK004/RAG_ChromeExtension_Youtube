@@ -1,9 +1,12 @@
-# main.py
 from chatmodel import get_chat_model
-from rag_pipeline import answer_query
+from rag_pipeline import answer_query_from_transcript_text
 
-videoID = input("Video ID: ").strip()
-query = input("Ask a question: ").strip()
+video_id = input("Video ID: ").strip()
+transcript = input("Paste transcript text: ").strip()
+question = input("Ask a question: ").strip()
 
 model = get_chat_model()
-print(answer_query(videoID, query, model, k=3))
+answer, sources = answer_query_from_transcript_text(video_id, transcript, question, model, k=3)
+
+print("\nANSWER:\n", answer)
+print("\nSOURCES:\n", sources)
