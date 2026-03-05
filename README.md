@@ -1,10 +1,10 @@
-# 🎥 YouTube RAG Assistant
+#  YouTube RAG Assistant
 
 A **Chrome Extension + FastAPI backend** that allows users to **ask questions about any YouTube video** using **Retrieval Augmented Generation (RAG)**.
 
 The system automatically extracts the transcript of a YouTube video, converts it into semantic embeddings, retrieves the most relevant segments, and generates answers using an LLM.
 
-✅ Users only need to ask a question — the system handles everything else.
+ Users only need to ask a question — the system handles everything else.
 
 ---
 
@@ -41,20 +41,20 @@ The system automatically extracts the transcript of a YouTube video, converts it
 
 ---
 
-## ✨ Features
+##  Features
 
-- 🎬 Ask questions about any YouTube video
-- 📜 Automatic transcript retrieval
-- 🧠 Retrieval Augmented Generation (RAG)
-- 🔎 Semantic search using vector embeddings
-- 🗄️ Vector database powered by **FAISS**
-- 🤖 LLM-based answers via **HuggingFace Inference API**
-- 🧩 Chrome Extension UI
-- ☁️ Deployable backend using **Docker / Render**
+-  Ask questions about any YouTube video
+-  Automatic transcript retrieval
+-  Retrieval Augmented Generation (RAG)
+-  Semantic search using vector embeddings
+-  Vector database powered by **FAISS**
+-  LLM-based answers via **HuggingFace Inference API**
+-  Chrome Extension UI
+-  Deployable backend using **Docker / Render**
 
 ---
 
-## 🧠 System Architecture
+## System Architecture
 
 ```text
 User Question
